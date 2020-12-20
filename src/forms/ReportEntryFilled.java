@@ -631,11 +631,11 @@ public class ReportEntryFilled extends Shell {
 		formToolkit.paintBordersFor(grpDailyChecklist);
 
 		Label lblEaWaItx
-				= formToolkit.createLabel(grpDailyChecklist, "EA_WA_ITX_Spreadsheet Verified for Accuracy: ", SWT.NONE);
+				= formToolkit.createLabel(grpDailyChecklist, "EA_WA_ITX Playouts Operational/Accurate:", SWT.NONE);
 		lblEaWaItx.setBounds(10, 25, 300, 15);
 
 		Label lblEaWaItxPlayout
-				= formToolkit.createLabel(grpDailyChecklist, "EA_WA_ITX_Spreadsheet Playouts Verified: \t", SWT.NONE);
+				= formToolkit.createLabel(grpDailyChecklist, "EAS System Function Checks (4+/shift):", SWT.NONE);
 		lblEaWaItxPlayout.setBounds(10, 45, 300, 15);
 
 		Label lblChannelLaunchActivities
@@ -643,7 +643,7 @@ public class ReportEntryFilled extends Shell {
 		lblChannelLaunchActivities.setBounds(10, 65, 300, 15);
 
 		Label lblWeatherMaps
-				= formToolkit.createLabel(grpDailyChecklist, "Ensure Weather Maps is functioning:\t", SWT.NONE);
+				= formToolkit.createLabel(grpDailyChecklist, "Daily SRF Agenda Verification:", SWT.NONE);
 		lblWeatherMaps.setBounds(10, 85, 300, 15);
 
 		Label lblInteractiveChecks

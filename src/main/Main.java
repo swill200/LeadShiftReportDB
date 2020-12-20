@@ -3,6 +3,9 @@ package main;
 import java.io.IOException;
 import java.time.LocalDate;
 
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -47,7 +50,6 @@ public class Main extends Shell {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 
 	}
 
@@ -166,17 +168,17 @@ public class Main extends Shell {
 		});
 
 		new Label(this, SWT.NONE);
-		
+
 		Menu menu = new Menu(this, SWT.BAR);
 		setMenuBar(menu);
-		
+
 		MenuItem mntmFile = new MenuItem(menu, SWT.CASCADE);
 		mntmFile.setText("&File");
 		mntmFile.setAccelerator(SWT.MOD2 + 'f');
-		
+
 		Menu menu_2 = new Menu(mntmFile);
 		mntmFile.setMenu(menu_2);
-		
+
 		MenuItem mntmQuit = new MenuItem(menu_2, SWT.NONE);
 		mntmQuit.setAccelerator(SWT.MOD1 + 'q');
 		mntmQuit.addSelectionListener(new SelectionAdapter() {
@@ -186,14 +188,14 @@ public class Main extends Shell {
 			}
 		});
 		mntmQuit.setText("&Quit\tCtrl+Q");
-		
+
 		MenuItem mntmConfig = new MenuItem(menu, SWT.CASCADE);
 		mntmConfig.setText("&Config");
 		mntmFile.setAccelerator(SWT.MOD2 + 'c');
-		
+
 		Menu menu_1 = new Menu(mntmConfig);
 		mntmConfig.setMenu(menu_1);
-		
+
 		MenuItem mntmEditDays = new MenuItem(menu_1, SWT.NONE);
 		mntmEditDays.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -208,7 +210,7 @@ public class Main extends Shell {
 			}
 		});
 		mntmEditDays.setText("Edit Days");
-		
+
 		MenuItem mntmEditSwings = new MenuItem(menu_1, SWT.NONE);
 		mntmEditSwings.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -223,7 +225,7 @@ public class Main extends Shell {
 			}
 		});
 		mntmEditSwings.setText("Edit Swings");
-		
+
 		MenuItem mntmEditMids = new MenuItem(menu_1, SWT.NONE);
 		mntmEditMids.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -238,7 +240,7 @@ public class Main extends Shell {
 			}
 		});
 		mntmEditMids.setText("Edit Mids");
-		
+
 		MenuItem mntmEditMoc = new MenuItem(menu_1, SWT.NONE);
 		mntmEditMoc.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -277,7 +279,7 @@ public class Main extends Shell {
 	protected void quit() {
 		this.close();
 	}
-	
+
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
