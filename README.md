@@ -18,7 +18,3 @@ This is the first window seen if the user selects 'Review Previous Shift Reports
 ## The Shift Report Entry Window  
 This window is the heart of the program. Technicians are able to effectively communicate any important shift information through this window. Once the oncoming lead has reviewed and accepted the passdown, pressing 'Save and Close' will create an HTML email in Outlook that can be sent to anyone that needs to see it.  
 ![Image of Shift Report Entry](img/passdown_entry.PNG)
-
-
-
-### I will be graduating in May of 2021 and will be willing and able to accept a software developer position immediately after.
