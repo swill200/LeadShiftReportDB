@@ -17,10 +17,8 @@ This window is the heart of the program. Technicians are able to effectively com
 ![Image of Shift Report Entry](img/passdown_entry.PNG)
 
 # Things I Learned From This Project
-1. Spend more time in the planning phase of a project.
-
+1. Spend more time in the planning phase of a project.  
    A lot of the complications I ran into while coding could have been avoided had I spent more time planning how this project was actually going to be built. Furthermore, I would have found that there were database options available for a stand-alone type application and I wouldn't have needed to save the data in such a hacky way.
 
-2. Set aside more time in the beginning to truly find out what the clients needs are.
-
-  Logging and security were never discussed, but in hindsight, they both could have been extremely valuable to the finished product.
+2. Set aside more time in the beginning to truly find out what the clients needs are.  
+   Logging and security were never discussed, but in hindsight, they both could have been extremely valuable to the finished product.
