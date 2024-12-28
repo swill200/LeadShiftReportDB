@@ -1,170 +1,161 @@
-package controller;
+package util;
 
-import org.eclipse.swt.SWT;
-//import org.eclipse.swt.ole.win32.OLE;
-import org.eclipse.swt.ole.win32.OleAutomation;
-import org.eclipse.swt.ole.win32.OleClientSite;
-import org.eclipse.swt.ole.win32.OleFrame;
-import org.eclipse.swt.ole.win32.Variant;
-import org.eclipse.swt.widgets.Shell;
+import model.DailyReport;
+import model.Shift;
+import model.Employee;
+import model.DailyChecklist;
+import model.OpAssignment;
+
+import java.util.List;
+import java.util.Properties;
+import javax.mail.*;
+import javax.mail.internet.*;
+import java.time.format.DateTimeFormatter;
 
 public class HtmlEmailSender {
 
-	public static void sendEMail(DataObject obj) {
-		Shell shell = new Shell();
-		OleFrame frame = new OleFrame(shell, SWT.NONE);
+	/**
+	 * Sends an HTML email summarizing the DailyReport and related data.
+	 *
+	 * @param report The DailyReport model object.
+	 * @param shift The Shift object associated with the DailyReport.
+	 * @param employeesOnDuty The list of Employees working during this shift.
+	 * @param checklist The DailyChecklist for the report.
+	 * @param assignments The OpAssignments for the report.
+	 * @param smtpHost SMTP Host for sending email.
+	 * @param fromAddress The from (sender) email address.
+	 * @param username SMTP username for authentication.
+	 * @param password SMTP password for authentication.
+	 * @throws MessagingException If sending the email fails.
+	 */
+	public static void sendEmail(
+			DailyReport report,
+			Shift shift,
+			List<Employee> employeesOnDuty,
+			DailyChecklist checklist,
+			List<OpAssignment> assignments,
+			String smtpHost,
+			String fromAddress,
+			String username,
+			String password
+	) throws MessagingException {
 
-		// This should start outlook if it is not running yet
-//      OleClientSite site = new OleClientSite(frame, SWT.NONE, "OVCtl.OVCtl");
-//      site.doVerb(OLE.OLEIVERB_INPLACEACTIVATE);
+		// Format date/time for display
+		String formattedDate = report.getDailyReportDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
-		// Now get the outlook application
-		OleClientSite site2 = new OleClientSite(frame, SWT.NONE, "Outlook.Application");
-		OleAutomation outlook = new OleAutomation(site2);
+		// Begin constructing HTML
+		StringBuilder sb = new StringBuilder("<html><body>"
+				+ "<style>body { font-family: Calibri, sans-serif; }"
+				+ ".Massive {color:red; font-size:24px} "
+				+ ".normal {font-weight: normal;} "
+				+ "h2 {color:black; font-size:16px;} "
+				+ "h4 {color:red; font-size:16px;} "
+				+ "p {color:black; font-size:16px}"
+				+ "</style>");
 
-		OleAutomation mail = invoke(outlook, "CreateItem", 0 /* Mail item */).getAutomation();
+		sb.append("<h1><span style=\"color: #0000ff;\">Shift Report</span></h1><hr />");
+		sb.append("<table><tbody><tr>");
+		sb.append("<td><strong>Date: </strong>").append(formattedDate).append("</td>");
+		sb.append("<td width=\"35%\"><strong>Author: </strong>").append(report.getCreatedBy()).append("</td>");
+		sb.append("<td width=\"25%\"><strong>Shift: </strong>").append(shift.getShiftName()).append("</td>");
+		sb.append("<td width=\"15%\"><strong>Oncoming Lead:</strong> ").append(report.getOncomingLead()).append("</td>");
+		sb.append("</tr></tbody></table><hr />");
 
-		StringBuilder sb = new StringBuilder(
-				"<style>  body { font-family: Calibri, sans-serif; mso-padding-bottom-alt: 0;} .Massive {color:red; font-size: 24px} "
-				+ ".normal {font-weight: normal;} h2 {color:black; font-size: 16px;} h3 {color:black; font-size: 14px;} "
-				+ "h4 {color:red; font-size: 16px;} p {color:black; font-size: 16px}</style><html><body><h1>"
-				+ "<span style=\"color: #0000ff;\">Cheyenne TOC Lead Tech Shift Report</span></h1>");
-		sb.append("<hr /><table><tbody><tr><td><strong>Date: </strong>" + obj.date + "</td>"
-				+ "<td width=\"35%\"><strong>Author: </strong>" + obj.user + "</td>"
-				+ "<td width=\"25%\"><strong>Shift: </strong>" + obj.shift + "</td>"
-				+ "<td width=\"15%\"><strong>Site:</strong> Cheyenne</td>" + "</tr></tbody></table>");
-		sb.append("<hr /><strong>MOC:  </strong>" + obj.mocValue + "<br />");
-		sb.append("<strong>ODS:  </strong>" + obj.odsValue);
-		sb.append("<h2>Daily System Checks and Responsibilities: </h2>");
-		if (dailyChecksCompleted(obj)) {
-			sb.append("<p style=\"color:blue;font-size:25px;\"> All complete! </p>");
+		// Passdown Accepted?
+		if (report.isPassdownAccepted()) {
+			sb.append("<p style=\"color:blue;font-size:20px;\">Passdown Accepted</p>");
 		} else {
-			sb.append("<h4> <div class=\"Massive\">System checks incomplete! </div></h4>");
-		}
-		sb.append("<h2>Call Outs: </h2>");
-		if (obj.callins.equals("")) {
-			sb.append("<p class=\"normal\">None</p>");
-		} else {
-			sb.append("<h4>" + obj.callins + "</h4>");
-		}
-		sb.append("<h2>On Duty Staff: </h2>");
-		for (int i = 0; i < obj.employeeNames.getItemCount(); i++) {
-			if (obj.employeeNames.getItem(i) != "None" && obj.getEmployees(i)) {
-				sb.append(obj.employeeNames.getItem(i) + ", ");
-			}
-		}
-		sb.delete((sb.length() - 2), (sb.length() - 1));
-
-		sb.append("<h2>Ongoing Outages and Maintenance: </h2>");
-		boolean checks = false;
-		for (int i = 0; i < obj.tableData.getItemCount(); i += 2) {
-			if (!obj.tableData.getItem(i).equals("")) {
-				sb.append(
-						"<h4>" + obj.tableData.getItem(i).toString() + " - " + obj.tableData.getItem(i + 1).toString() + "</h4>");
-				checks = true;
-			}
-		}
-		if (!checks) {
-			sb.append("<p class=\"normal\">None</p>");
-		}
-
-		sb.append("<h2>Takedowns, Restores, and Other Channel Launch: </h2>");
-//		System.out.println(obj.takedownText + " <--");
-		if (obj.takedownText.equals("")) {
-			sb.append("<p class=\"normal\">None</p>");
-		} else {
-			sb.append("<h4>" + obj.takedownText + "</h4>");
-		}
-
-		sb.append("<h2>Requests From Other Departments: </h2>");
-		if (obj.idRequestText.equals("")) {
-			sb.append("<p class=\"normal\">None</p>");
-		} else {
-			sb.append("<h4>" + obj.idRequestText + "</h4>");
-		}
-
-		sb.append("<h2>Equipment and/or Redundancy Issues: </h2>");
-		if (obj.equipmentText.equals("")) {
-			sb.append("<p class=\"normal\">None</p>");
-		} else {
-			sb.append("<h4>" + obj.equipmentText + "</h4>");
-		}
-
-		sb.append("<h2>Special Monitoring Requests: </h2>");
-		if (obj.specialMonitoringText.equals("")) {
-			sb.append("<p class=\"normal\">None</p>");
-		} else {
-			sb.append("<h4>" + obj.specialMonitoringText + "</h4>");
-		}
-
-		sb.append("<h2>Oncoming Shift Lead Tech: </h2>");
-		sb.append("<p class=\"normal\">" + obj.oncomingLead + "</p>");
-		if (obj.declinedChecked) {
 			sb.append("<h4 class=\"Massive\">Passdown was declined!</h4>");
-			sb.append("<h2>Reasoning:</h2> " + obj.declinedReason);
 		}
+
+		// Daily Checklist Results
+		sb.append("<h2>Daily Checklist:</h2>");
+		boolean allComplete = checklist.isArcITXAccuracy() && checklist.isArcITXVerified() &&
+				checklist.isChannelLaunch() && checklist.isWeatherMaps() &&
+				checklist.isInteractiveChannel() && checklist.isDailyLeadSweep() &&
+				checklist.isMaintenanceTicket() && checklist.isRestoreVerified() &&
+				checklist.isStbTurner() && checklist.isPreliminaryKCI() &&
+				checklist.isSkdl() && checklist.isTakedown();
+
+		if (allComplete) {
+			sb.append("<p style=\"color:blue;font-size:20px;\">All checklist items complete!</p>");
+		} else {
+			sb.append("<h4 class=\"Massive\">Some checklist items are incomplete!</h4>");
+			sb.append("<p>Details:</p><ul>");
+			if (!checklist.isArcITXAccuracy()) sb.append("<li>ArcITXAccuracy not complete</li>");
+			if (!checklist.isArcITXVerified()) sb.append("<li>ArcITXVerified not complete</li>");
+			if (!checklist.isChannelLaunch()) sb.append("<li>ChannelLaunch not complete</li>");
+			if (!checklist.isWeatherMaps()) sb.append("<li>WeatherMaps not complete</li>");
+			if (!checklist.isInteractiveChannel()) sb.append("<li>InteractiveChannel not complete</li>");
+			if (!checklist.isDailyLeadSweep()) sb.append("<li>DailyLeadSweep not complete</li>");
+			if (!checklist.isMaintenanceTicket()) sb.append("<li>MaintenanceTicket not complete</li>");
+			if (!checklist.isRestoreVerified()) sb.append("<li>RestoreVerified not complete</li>");
+			if (!checklist.isStbTurner()) sb.append("<li>STBTurner not complete</li>");
+			if (!checklist.isPreliminaryKCI()) sb.append("<li>PreliminaryKCI not complete</li>");
+			if (!checklist.isSkdl()) sb.append("<li>SKDL not complete</li>");
+			if (!checklist.isTakedown()) sb.append("<li>Takedown not complete</li>");
+			sb.append("</ul>");
+		}
+
+		// On Duty Staff
+		sb.append("<h2>On Duty Staff:</h2>");
+		if (employeesOnDuty.isEmpty()) {
+			sb.append("<p class=\"normal\">None</p>");
+		} else {
+			sb.append("<p>");
+			for (Employee emp : employeesOnDuty) {
+				sb.append(emp.getFirstName()).append(" ").append(emp.getLastName()).append(", ");
+			}
+			// Remove last comma and space if present
+			sb.setLength(sb.length() - 2);
+			sb.append("</p>");
+		}
+
+		// Operational Assignments
+		sb.append("<h2>Operational Assignments:</h2>");
+		if (assignments.isEmpty()) {
+			sb.append("<p class=\"normal\">None</p>");
+		} else {
+			for (OpAssignment assign : assignments) {
+				sb.append("<h4>").append(assign.getAssignment()).append(" - ")
+						.append(assign.getOpAssignmentDate().toString()).append("</h4>");
+			}
+		}
+
+		// Close HTML
 		sb.append("</body></html>");
 
-		setProperty(mail, "BodyFormat", 2 /* HTML */);
-		setProperty(mail, "Subject", ("Lead Tech Shift Report - " + obj.shift  + " " + obj.date));
-		setProperty(mail, "To", "Cheyenne-TOCTeamLeaders@dish.com");
-		setProperty(mail, "HtmlBody", sb.toString().replaceAll("[\\n]", "<br />"));
+		// Setup mail properties
+		Properties props = new Properties();
+		props.put("mail.smtp.host", smtpHost);
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
 
-// To include attachments, currently unused
-//      if (null != attachmentPaths) {
-//          for (String attachmentPath : attachmentPaths) {
-//              File file = new File(attachmentPath);
-//              if (file.exists()) {
-//                  OleAutomation attachments = getProperty(mail, "Attachments");
-//                  invoke(attachments, "Add", attachmentPath);
-//              }
-//          }
-//      }
+		// Create a Session with authentication
+		Session session = Session.getInstance(props, new Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(username, password);
+			}
+		});
 
-		invoke(mail, "Display" /* or "Send" */);
+		// Create the message
+		Message message = new MimeMessage(session);
+		message.setFrom(new InternetAddress(fromAddress));
+		// Set recipient(s) as needed. For demonstration, we'll use a placeholder:
+		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("Cheyenne-TOCTeamLeaders@dish.com"));
+		message.setSubject("Shift Report - " + shift.getShiftName() + " " + formattedDate);
 
-	}
+		// Create a multipart message for HTML content
+		Multipart multipart = new MimeMultipart("alternative");
 
-	private static boolean dailyChecksCompleted(DataObject obj) {
-		if (!obj.eaWaItxComplete || !obj.eaWaItxPlayoutComplete || !obj.channelLaunchComplete || !obj.weatherComplete
-				|| !obj.interactiveComplete || !obj.dailySweeps || !obj.maintenanceComplete || !obj.turnerComplete
-				|| !obj.kciComplete || !obj.skdlComplete || !obj.mcSwitchesComplete || !obj.maintenanceSigned) {
-			return false;
-		}
-		return true;
-	}
+		// HTML part
+		MimeBodyPart htmlPart = new MimeBodyPart();
+		htmlPart.setContent(sb.toString(), "text/html; charset=UTF-8");
+		multipart.addBodyPart(htmlPart);
 
-//	private static OleAutomation getProperty(OleAutomation auto, String name) {
-//		Variant varResult = auto.getProperty(property(auto, name));
-//		if (varResult != null && varResult.getType() != OLE.VT_EMPTY) {
-//			OleAutomation result = varResult.getAutomation();
-//			varResult.dispose();
-//			return result;
-//		}
-//		return null;
-//	}
+		message.setContent(multipart);
 
-//	private static Variant invoke(OleAutomation auto, String command, String value) {
-//		return auto.invoke(property(auto, command), new Variant[] { new Variant(value) });
-//	}
-
-	private static Variant invoke(OleAutomation auto, String command) {
-		return auto.invoke(property(auto, command));
-	}
-
-	private static Variant invoke(OleAutomation auto, String command, int value) {
-		return auto.invoke(property(auto, command), new Variant[] { new Variant(value) });
-	}
-
-	private static boolean setProperty(OleAutomation auto, String name, String value) {
-		return auto.setProperty(property(auto, name), new Variant(value));
-	}
-
-	private static boolean setProperty(OleAutomation auto, String name, int value) {
-		return auto.setProperty(property(auto, name), new Variant(value));
-	}
-
-	private static int property(OleAutomation auto, String name) {
-		return auto.getIDsOfNames(new String[] { name })[0];
+		// Send the message
+		Transport.send(message);
 	}
 }

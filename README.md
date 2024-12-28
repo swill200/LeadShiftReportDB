@@ -2,7 +2,7 @@
 
 ### Affectionately known as LeTeRS  
 
-This 'Lead Tech Shift Report' program was designed and implemented as a way of communicating important information between shifts. I was not able to implement a proper database backend due to network and system permissions. So, I implemented a simple "datastore" that essentially stores everything in a long string that is delimited by "--;". I plan to continue exploring options for this data storage methodology (like a database that resides in a network folder but can run locally), and any suggestions would be appreciated!  
+This 'Lead Tech Shift Report' program was designed and implemented as a way of communicating important information between shifts. I was not able to implement a proper database backend due to network and system permissions. So, I implemented a simple "model" that essentially stores everything in a long string that is delimited by "--;". I plan to continue exploring options for this data storage methodology (like a database that resides in a network folder but can run locally), and any suggestions would be appreciated!  
   
 ## The Main Screen   
 A simple window to allow the user to select what they intend to do with a file menu for easy access to configuration files.  

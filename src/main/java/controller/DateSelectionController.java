@@ -2,51 +2,28 @@ package controller;
 
 import view.DateSelectionView;
 import view.PreviousReportsView;
-import model.LeadShiftReport;
-import model.LeadShiftReportDAO;
-
-import javax.swing.*;
-import java.time.LocalDate;
+import model.DailyReportDAO;
+import model.DailyReport;
 import java.util.List;
 
 public class DateSelectionController {
     private DateSelectionView dateView;
-    private LeadShiftReportDAO dao;
+    private DailyReportDAO reportDAO;
 
-    public DateSelectionController(DateSelectionView dateView, LeadShiftReportDAO dao) {
+    public DateSelectionController(DateSelectionView dateView, DailyReportDAO reportDAO) {
         this.dateView = dateView;
-        this.dao = dao;
-    }
+        this.reportDAO = reportDAO;
 
-    public void handleSearch(String dateStr, String shift) {
-        try {
-            LocalDate date = LocalDate.parse(dateStr);
-            List<LeadShiftReport> reports = dao.getReportsByDateAndShift(date, shift);
+        this.dateView.setSearchListener((date, shiftName) -> {
+            // You would need a method in DAO to get reports by date/shiftName
+            // For demonstration, let's assume we have it:
+            List<DailyReport> reports = reportDAO.getReportsByDateAndShift(date, shiftName);
 
+            // Once you have the reports:
             PreviousReportsView prevView = new PreviousReportsView();
-            PreviousReportsController prevController = new PreviousReportsController(prevView);
-            prevView.setController(prevController);
-
-            if (reports.isEmpty()) {
-                prevView.setReportsText("No reports found for this date and shift.");
-            } else {
-                StringBuilder sb = new StringBuilder();
-                for (LeadShiftReport r : reports) {
-                    sb.append("ID: ").append(r.getId()).append("\n")
-                            .append("Technician: ").append(r.getTechnicianName()).append("\n")
-                            .append("Date: ").append(r.getShiftDate()).append("\n")
-                            .append("Shift: ").append(r.getShift()).append("\n")
-                            .append("Content:\n").append(r.getReportContent()).append("\n")
-                            .append("Sign-Off: ").append(r.isSignOff()).append("\n")
-                            .append("-------------------------\n");
-                }
-                prevView.setReportsText(sb.toString());
-            }
-
+            new PreviousReportsController(prevView/*pass needed data*/);
             prevView.open();
             dateView.dispose();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(dateView, "Invalid date format. Use YYYY-MM-DD.");
-        }
+        });
     }
 }

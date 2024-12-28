@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-19">
+		<attributes>
+			<attribute name="module" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="D:/OneDrive/Eclipse_Workspace/EclipseUserLibraries/sqlite-jdbc-3.47.1.0.jar"/>
+	<classpathentry kind="lib" path="D:/OneDrive/git/LeadShiftReport/src/lib/org.eclipse.core.commands_3.12.200.v20240627-1019.jar"/>
+	<classpathentry kind="lib" path="D:/OneDrive/git/LeadShiftReport/src/lib/org.eclipse.equinox.common_3.19.200.v20241004-0654.jar"/>
+	<classpathentry kind="lib" path="D:/OneDrive/git/LeadShiftReport/src/lib/org.eclipse.jface_3.35.100.v20241003-1431.jar"/>
+	<classpathentry kind="lib" path="D:/OneDrive/git/LeadShiftReport/src/lib/org.eclipse.ui.forms_3.13.400.v20240905-1138.jar"/>
+	<classpathentry kind="lib" path="D:/OneDrive/git/LeadShiftReport/src/lib/org.eclipse.ui.workbench_3.134.0.v20241107-2150.jar"/>
+	<classpathentry kind="lib" path="D:/OneDrive/git/LeadShiftReport/src/lib/swt.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="LeadShiftReport/src/lib/swt/library"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

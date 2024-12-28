@@ -5,10 +5,8 @@ import view.PreviousReportsView;
 public class PreviousReportsController {
     private PreviousReportsView prevView;
 
-    public PreviousReportsController(PreviousReportsView prevView) {
+    public PreviousReportsController(PreviousReportsView prevView, /*other data as needed*/) {
         this.prevView = prevView;
+        // Populate prevView with report data
     }
-
-    // This controller could handle actions like sign-off, etc.
-    // Currently, it's just displaying reports passed from DateSelectionController.
 }
