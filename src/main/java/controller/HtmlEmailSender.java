@@ -1,4 +1,4 @@
-package forms;
+package controller;
 
 import org.eclipse.swt.SWT;
 //import org.eclipse.swt.ole.win32.OLE;
@@ -7,8 +7,6 @@ import org.eclipse.swt.ole.win32.OleClientSite;
 import org.eclipse.swt.ole.win32.OleFrame;
 import org.eclipse.swt.ole.win32.Variant;
 import org.eclipse.swt.widgets.Shell;
-
-import main.DataObject;
 
 public class HtmlEmailSender {
 

@@ -1,4 +1,4 @@
-package main;
+package view;
 
 /* Code edited by swilliams from original source GeeksForGeeks
  * https://www.geeksforgeeks.org/java-swing-creating-toast-message/ */
